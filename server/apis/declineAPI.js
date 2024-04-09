@@ -1,19 +1,5 @@
 const DeclineRecordList = require("../dbModels/DeclinedRecord");
 
-exports.getDeclinedRecordList = async (hospitalAddress) => {
-  let recordList = await DeclineRecordList.findOne({ hospitalAddress });
-  if (!recordList) {
-    console.log(
-      `Declined record list not found for ${hospitalAddress}, hence creating one`
-    );
-    recordList = new DeclineRecordList({
-      hospitalAddress,
-      declinedRecords: [],
-    });
-    await recordList.save();
-  }
-  return recordList;
-};
 
 exports.addDeclinedRecord = async (recordDetails, patientName, declineMsg) => {
   const hospitalAddress = recordDetails.senderHospital;
@@ -32,6 +18,21 @@ exports.addDeclinedRecord = async (recordDetails, patientName, declineMsg) => {
     });
     await recordList.save();
   }
+
+  exports.getDeclinedRecordList = async (hospitalAddress) => {
+    let recordList = await DeclineRecordList.findOne({ hospitalAddress });
+    if (!recordList) {
+      console.log(
+        `Declined record list not found for ${hospitalAddress}, hence creating one`
+      );
+      recordList = new DeclineRecordList({
+        hospitalAddress,
+        declinedRecords: [],
+      });
+      await recordList.save();
+    }
+    return recordList;
+  };
 
   recordList.declinedRecords.push({
     patientName,
